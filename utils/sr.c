@@ -24,5 +24,6 @@ int main() {
     t2 = clock();
     diff2 = t2 - t1;
     printf("fsqrt:\tresultado:%f\tciclos:%ld\n",res1,(long)diff1);
+    printf("sqrt:\tresultado:%f\tciclos:%ld\n",res2,(long)diff2);
     return 0;
 }
