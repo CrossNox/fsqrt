@@ -1,71 +1,29 @@
 #include <stdio.h>
 #include <math.h>
-
-#define MAGIC 0x3f800000
+#include <time.h>
 
 float fsqrt(float n) {
     unsigned i = *(unsigned*)&n;
-    i = (i + MAGIC) >> 1;
+    i = (i + 0x3f800000) >> 1;
     float y = *(float*)&i;
-    y = y*1.5f - n/(2*y);
+    y = y*0.5f + n/(2*y); 
+    y = y*0.5f + n/(2*y); 
     return y;
 }
 
-float fsqrt2(float n) {
-    unsigned i = *(unsigned*)&n;
-    i = (i + MAGIC) >> 1;
-    float y = *(float*)&i;
-    y = y*1.5f - n/(2*y);
-    y = y*1.5f - n/(2*y);
-    return y;
-}
-
-float vfsqrt(float n, long add) {
-    unsigned i = *(unsigned*)&n;
-    i = (i + MAGIC + add) >> 1;
-    float y = *(float*)&i;
-    y = y*1.5f - n/(2*y);
-    return y;
-}
-
-int main() {/*
-    float x = 1.0f;    
-    for(size_t i=0;i<500;x+=1.0f,i++) {
-        float sr = sqrt(x);
-        float error = 50.0f;
-        long best = 0;
-        for(long j = -1048575; j<1048576;j++) {
-            float sra = vfsqrt(x,j);
-            float err = fabs(sr-sra);            
-            error = err<error?err:error;
-            best = err<error?j:best;
-        }
-        printf("%ld , %f\n",best,error);
-    }
-    */
-    float y = 1;
-    
-    puts("AGAIN");
-    for(size_t i=0;i<1000000;i++,y+=1.0f) {
-        float sr = sqrt(y);
-        float sra;
-        float error = 1000;
-        long best = 0;
-        for(long j = -4048575; j<4048576;j++) {
-        //printf("trying %ld\n",j);
-        sra = vfsqrt(y,j);        
-        float err = fabs(sr-sra);
-        
-        if(err < error) {
-            //printf("%f %f %f\n",sr,sra,err);
-            error = err;
-            best=j;
-        }         
-        
-        }
-        printf("%f\t%ld\t%f\t%f\t%f\n",y,best,sr,vfsqrt(y,best),error);
-    }
-    
-    
+int main() {
+    clock_t t1, t2, diff1, diff2;
+    float res1, res2;
+    float x = 7738563.26;
+    t1 = clock();
+    res1 = fsqrt(x);
+    t2 = clock();
+    diff1 =t2-t1;
+    t1 = clock();
+    res2 = sqrt(x);
+    t2 = clock();
+    diff2 = t2 - t1;
+    printf("fsqrt:\tresultado:%f\tciclos:%ld\n",res1,(long)diff1);
+    printf("sqrt:\tresultado:%f\tciclos:%ld\n",res2,(long)diff2);
     return 0;
 }
