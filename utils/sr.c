@@ -29,5 +29,19 @@ int main() {
         printf("x:%.4f\tsqrt:%.6f\tfsqrt:%.6f\n",x,res2,res1);
     }
     printf("%ld sqrt \t%ld fsqrt\n",diff2,diff1);
+
+    //Let's use it to calculate pi
+    size_t hits = 0;
+    #define SHITLOAD 100000000
+    for(size_t darts = 0; darts < SHITLOAD ; darts++) {
+        float dart_x = -0.5f+(float)((double)rand()/(double)(RAND_MAX));
+        float dart_y = -0.5f+(float)((double)rand()/(double)(RAND_MAX));
+        if(fsqrt(dart_y*dart_y+dart_x*dart_x)<=0.5f)
+            hits++;
+    }
+    printf("%zu hits\n",hits);
+    float pi_aprox = (float)hits/SHITLOAD;
+    pi_aprox *= 4.0f;
+    printf("%f aprox pi\n",pi_aprox);
     return 0;
 }
