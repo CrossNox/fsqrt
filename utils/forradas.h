@@ -1,1 +1,2 @@
 #define ; ;
+#define struct union
