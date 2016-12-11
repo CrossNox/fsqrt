@@ -91,6 +91,42 @@ float fsqrt(float n) {
 }
 \end{lstlisting}
 	
-	
+\section{Aplicando iteraciones de Newton-Raphson}
 
+La funcion raiz es derivable en el intervalo de representacion de flotantes no negativos, por lo que usaremos iteraciones de Newton-Raphson para mejorar los resultados obtenidos anteriormente. Usaremos el valor aproximado previamente como raiz para el metodo.
+
+Se define que: 
+\begin{equation}
+X_{n+1}=X_n - \frac{g(X_n)}{g'(X_n)}
+\end{equation} 
+
+Definimos 
+\begin{equation} \label{eq:deffuncg}
+g(y)=y^{2}-f
+\end{equation}
+Donde f es un numero real. \(g(y)=0\) si \(y=\sqrt{f}\). Derivamos \eqref{eq:deffuncg} para obtener
+\begin{equation}
+g'(y)=2y
+\end{equation}
+
+\begin{equation}
+y_{n+1} = y_n - \frac{y_n^{2}-f}{2y_n} = y_n - (\,\frac{y_n}{2} - \frac{f}{2y_n} )\, = \frac{y_n}{2} + \frac{f}{2y_n} 
+\end{equation}
+
+Implementamos una iteracion de Newton-Raphson:
+
+\begin{lstlisting}
+float fsqrt(float n) {
+	unsigned i = *(unsigned*)&n;
+	i = (i + 0x3f800000) >> 1;
+	float y = *(float*)&i;
+	y = y*0.5f + n/(2*y);  
+	return y;
+}
+\end{lstlisting}
+
+Se pueden incluir multiples iteraciones de Newton-Raphson en pos de mejorar la precision, pero con una penalidad de tiempo.
+
+\section{Consideraciones a futuro}
+A fin de mejorar la precision del algoritmo sin afectar el tiempo, se deberia buscar un \(\sigma\) que como se menciono previamente, minimice el error medio para todos los puntos.
 \end{document}
