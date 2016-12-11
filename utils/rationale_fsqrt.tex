@@ -26,7 +26,7 @@
 }
 
 %opening
-\title{fsqrt rationale (or at least, some sense for the magic constant)}
+\title{fsqrt rationale}
 \author{I. J. Mermet}
 
 \begin{document}
@@ -41,6 +41,10 @@ f = (-1)^{s}.(1+M).2^{exp}
 
 Queremos encontrar una forma de calcular \(\sqrt{f}\) , por lo tanto asumiremos que s vale 0.
 
+\begin{equation}
+f = (1 + M)*2^{exp}
+\end{equation}
+
 Sea \(y=\sqrt{f}=f^{1/2}\), entonces:
 \begin{equation} \label{eq:logeq}
 \log_2(y)=\frac{1}{2}\log_2(f)
@@ -48,9 +52,6 @@ Sea \(y=\sqrt{f}=f^{1/2}\), entonces:
 
 La ecuacion \eqref{eq:logeq} nos interesa en particular, pues es facil de calcular:
 
-\begin{equation}
-f = (1 + M)*2^{exp}
-\end{equation}
 \begin{equation} \label{eq:eqlogf}
 	\log_2(f) = \log_2((1 + M)*2^{exp}) = exp + \log_2(1+M)
 \end{equation}
