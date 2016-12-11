@@ -34,7 +34,7 @@
 	\maketitle
 	
 	\section{Explicacion de la obtencion de la constante}
-Sea \(f\) un número flotante de precisión simple conforme norma IEEE 754.
+Sea \(f\) un numero flotante de precision simple conforme norma IEEE 754.
 \begin{equation}
 f = (-1)^{s}.(1+M).2^{exp-127}
 \end{equation}
@@ -76,11 +76,6 @@ Donde \begin{itemize}
 \end{itemize}
 
 \(I_f = (exp + B)*L + M*L = L*(\,exp+B+M)\,=L*(\,exp+B+M+\sigma-\sigma)\,=L*(\,\log_2(f)+B-\sigma)\,\Rightarrow\frac{I_f}{L}-(\,B-\sigma)\,=\log_2(f)\)
-
-Para dejar en claro:
-\begin{equation}
-I_f = \log_2(f)
-\end{equation}
 
 Volviendo a \eqref{eq:logeq}: \(\frac{I_y}{L}-(\,B-\sigma)\,=\frac{1}{2}(\, \frac{I_f}{L}-(\,B-\sigma)\,)\,\Rightarrow \frac{I_y}{L}=\frac{1}{2}(\,\frac{I_f}{L}-(\,B-\sigma)\,)\,+(\,B-\sigma)\,\Rightarrow  \frac{I_y}{L}=\frac{I_f}{2L}+\frac{(\,B-\sigma)\,}{2}\Rightarrow  I_y=\frac{I_f}{2}+\frac{(\,B-\sigma)\,*L}{2}\)
 
