@@ -1,0 +1,101 @@
+\documentclass[]{article}
+\usepackage{amsmath}
+
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=C,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+%opening
+\title{fsqrt rationale (or at least, some sense for the magic constant)}
+\author{I. J. Mermet}
+
+\begin{document}
+	
+	\maketitle
+	
+	\section{Explicacion de la obtencion de la constante}
+Sea \(f\) un número flotante de precisión simple conforme norma IEEE 754.
+\begin{equation}
+f = (-1)^{s}.(1+M).2^{exp-127}
+\end{equation}
+
+Queremos encontrar una forma de calcular \(\sqrt{f}\) , por lo tanto asumiremos que s vale 0.
+
+Sea \(y=\sqrt{f}=f^{1/2}\), entonces:
+\begin{equation} \label{eq:logeq}
+\log_2(y)=\frac{1}{2}\log_2(f)
+\end{equation}
+
+La ecuacion \eqref{eq:logeq} nos interesa en particular, pues es facil de calcular:
+
+\begin{equation}
+f = (1 + M)*2^{exp}
+\end{equation}
+\begin{equation} \label{eq:eqlogf}
+	\log_2(f) = \log_2((1 + M)*2^{exp}) = exp + \log_2(1+M)
+\end{equation}
+
+Conforme IEEE 754, \(M \in [\,0,1)\,\Rightarrow (1+M)\in[\,1,2)\,\Rightarrow\log_2(1+M)\in[\,0,1)\,\Rightarrow\log_2(1+M)\simeq M\Rightarrow\log_2(1+M)=M+\sigma \)
+
+Tomando en cuenta el anterior resultado, y la ecuacion \eqref{eq:eqlogf}, reemplazando:
+
+\begin{equation}
+\log_2(f)=exp+M+\sigma
+\end{equation}
+
+
+Sea \(I_f\) la representacion del mapa de bits de \(f\) como un numero entero. Entonces, tenemos que:
+\begin{equation}
+I_f = E_f * L + M_f
+\end{equation}
+Donde \begin{itemize}
+	\item \(E_f = exp + B\)
+	\item \(B =\) bias del exponente (\,127)\,
+	\item \(M_f = M * L\)
+	\item \(L = 2^{23}\) (23 es la cantidad de bits de la mantisa)
+\end{itemize}
+
+\(I_f = (exp + B)*L + M*L = L*(\,exp+B+M)\,=L*(\,exp+B+M+\sigma-\sigma)\,=L*(\,\log_2(f)+B-\sigma)\,\Rightarrow\frac{I_f}{L}-(\,B-\sigma)\,=\log_2(f)\)
+
+Para dejar en claro:
+\begin{equation}
+I_f = \log_2(f)
+\end{equation}
+
+Volviendo a \eqref{eq:logeq}: \(\frac{I_y}{L}-(\,B-\sigma)\,=\frac{1}{2}(\, \frac{I_f}{L}-(\,B-\sigma)\,)\,\Rightarrow \frac{I_y}{L}=\frac{1}{2}(\,\frac{I_f}{L}-(\,B-\sigma)\,)\,+(\,B-\sigma)\,\Rightarrow  \frac{I_y}{L}=\frac{I_f}{2L}+\frac{(\,B-\sigma)\,}{2}\Rightarrow  I_y=\frac{I_f}{2}+\frac{(\,B-\sigma)\,*L}{2}\)
+
+Tomando \(\sigma=0\), para simplificar el razonamiento, el termino \(\frac{B*L}{2}\) es \verb|0x3f800000|. Convirtiendo \(I_y\) a una interpretacion de su mapa de bits como flotante de precision simple, tenemos una aproximacion del valor buscado. Su precision puede mejorarse buscando un \(\sigma\) que minimice el error medio para todos los puntos o aplicando \verb|n| iteraciones de Newton-Raphson.
+	
+\section{Codigo inicial}
+\begin{lstlisting}
+float fsqrt(float n) {
+	unsigned i = *(unsigned*)&n;
+	i = (i + 0x3f800000) >> 1;
+	float y = *(float*)&i;  
+	return y;
+}
+\end{lstlisting}
+	
+	
+
+\end{document}
