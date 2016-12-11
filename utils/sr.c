@@ -7,34 +7,20 @@ float fsqrt(float n) {
     unsigned i = *(unsigned*)&n;
     i = (i + 0x3f800000) >> 1;
     float y = *(float*)&i;
-    y = y*0.5 + n/(2*y);
-    y = y*0.5 + n/(2*y);  
-    return y;
-}
-
-int main() {#include <stdio.h>
-#include <math.h>
-#include <time.h>
-#include <stdlib.h>
-
-float fsqrt(float n) {
-    unsigned i = *(unsigned*)&n;
-    i = (i + 0x3f800000) >> 1;
-    float y = *(float*)&i;
-    y = y*0.5 + n/(2*y);
-    y = y*0.5 + n/(2*y);  
+    y = y*0.5f + n/(2*y);
+    y = y*0.5f + n/(2*y);  
     return y;
 }
 
 int main() {
-    srand(clock());
+    srand((unsigned)clock());
     clock_t t1, t2, diff1=0, diff2=0;
     float res1, res2, x;
     #define SHITLOAD 100000
     for(size_t i= 0; i < SHITLOAD ; i++) {
         x = ((float)rand())/10000;        
         t1 = clock();
-        res2 = sqrt(x);
+        res2 = (float)sqrt(x);
         t2 = clock();
         diff2 += t2-t1;
         t1 = clock();
