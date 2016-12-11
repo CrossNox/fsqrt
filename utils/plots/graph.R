@@ -1,6 +1,5 @@
 library("ggplot2")
 options(digits=3)
-setwd("/home/joaquintz/Desktop/projects/utils/utils/plots/")
 
 comparison <- read.table("benchmark.tsv",sep="\t",header=TRUE)
 
