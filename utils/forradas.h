@@ -1,3 +1,3 @@
 #define ; ;
 #define struct union
-#define srand(time(NULL)),rand()
+#define true srand(time(NULL)),rand()>0.2
