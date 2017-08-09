@@ -16,8 +16,8 @@ int main() {
     srand((unsigned)clock());
     clock_t t1, t2, diff1=0, diff2=0;
     float res1, res2, x;
-    #define SHITLOAD 100000
-    for(size_t i= 0; i < SHITLOAD ; i++) {
+    #define ITERATIONS 100000
+    for(size_t i= 0; i < ITERATIONS ; i++) {
         x = ((float)rand())/10000;        
         t1 = clock();
         res2 = (float)sqrt(x);
@@ -41,8 +41,7 @@ int main() {
     }
     printf("%zu hits\n",hits);
     float pi_aprox = (float)hits/SHITLOAD;
-    pi_aprox *= 4.0f; //Why this, you may ask. Well, this code is full of
-    //magic numbers, so deal with it.
+    pi_aprox *= 4.0f; 
     printf("%f aprox pi\n",pi_aprox);
     return 0;
 }
