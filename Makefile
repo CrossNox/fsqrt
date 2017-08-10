@@ -5,7 +5,7 @@ CC=gcc
 all: $(EXEC)
 
 $(EXEC):
-	$(CC) sr.c $(CFLAGS) -o $(EXEC) -lm
+	$(CC) fsqrt.c sr.c $(CFLAGS) -o $(EXEC) -lm
 
 .PHONY: clean
 

@@ -2,46 +2,79 @@
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>
+#include <float.h>
+#include "fsqrt.h"
 
-float fsqrt(float n) {
-    unsigned i = *(unsigned*)&n;
-    i = (i + 0x3f800000) >> 1;
-    float y = *(float*)&i;
-    y = y*0.5f + n/(2*y);
-    y = y*0.5f + n/(2*y);  
-    return y;
+#ifndef M_PI
+#define M_PI acos(-1.0)
+#endif
+#define ITERATIONS 10000
+
+void time_tests(int iterations) {    
+    FILE* f = fopen("time_tests.csv","w");
+    fprintf(f,"index,f,sqrtf,fsqrt\n");
+
+    clock_t t1, t2, diff_fsqrt=0, diff_sqrtf=0;
+    float x;
+
+    for(size_t i= 0; i < iterations ; ++i) {
+        x = 100.0f*((float)rand())/((float)RAND_MAX);    
+
+        t1 = clock();
+        sqrtf(x);
+        t2 = clock();
+        diff_sqrtf = t2-t1;
+
+        t1 = clock();
+        fsqrt(x,2);
+        t2 = clock();
+        diff_fsqrt = t2-t1;
+
+        fprintf(f,"%lu,%.12f,%ld,%ld\n",i,x,diff_sqrtf,diff_fsqrt);
+    }
+    fclose(f);
 }
 
-int main() {
-    srand((unsigned)clock());
-    clock_t t1, t2, diff1=0, diff2=0;
-    float res1, res2, x;
-    #define ITERATIONS 100000
-    for(size_t i= 0; i < ITERATIONS ; i++) {
-        x = ((float)rand())/10000;        
-        t1 = clock();
-        res2 = (float)sqrt(x);
-        t2 = clock();
-        diff2 += t2-t1;
-        t1 = clock();
-        res1 = fsqrt(x);
-        t2 = clock();
-        diff1 += t2-t1;
-        printf("x:%.6f\tsqrt:%.6f\tfsqrt:%.6f\n",x,res2,res1);
-    }
-    printf("%ld sqrt \t%ld fsqrt\n",diff2,diff1);
+void difference_tests(float max) {    
+    FILE* f = fopen("difference_tests.csv","w");
+    fprintf(f,"index,f,diff2,diff3,diff4,diff5\n");
 
-    //Let's use it to calculate pi
-    size_t hits = 0;    
-    for(size_t darts = 0; darts < SHITLOAD ; darts++) {
-        float dart_x = -1.0f+(float)(((double)rand()/(double)(RAND_MAX))*2);
-        float dart_y = -1.0f+(float)(((double)rand()/(double)(RAND_MAX))*2);
-        if(fsqrt(dart_y*dart_y+dart_x*dart_x)<=1.0f)
-            hits++;
+    float res_fsqrt, res_sqrtf, x = 0.25f;
+
+    for(int i=0; x < max ; ++i,x += 0.01f) {
+        res_sqrtf = sqrtf(x);
+        fprintf(f,"%i,%.12f",i,x);
+        for(int j=2;j<=5;++j){
+            res_fsqrt = fsqrt(x,j);
+            fprintf(f,",%.12f",res_fsqrt-res_sqrtf);
+        }
+        fprintf(f,"\n");
     }
-    printf("%zu hits\n",hits);
-    float pi_aprox = (float)hits/SHITLOAD;
-    pi_aprox *= 4.0f; 
-    printf("%f aprox pi\n",pi_aprox);
+    fclose(f);
+}
+
+void calculate_pi(int iterations) {
+    FILE* f = fopen("pi.csv","w");
+    fprintf(f,"iterations,pi_aprox,difference\n");
+
+    for(int i=1;i<iterations;++i) {
+        size_t hits = 0;    
+        for(size_t darts = 0; darts < i ; darts++) {
+            float dart_x = -1.0f+(float)(((double)rand()/(double)(RAND_MAX))*2);
+            float dart_y = -1.0f+(float)(((double)rand()/(double)(RAND_MAX))*2);
+            hits+=!!(fsqrt(dart_y*dart_y+dart_x*dart_x,2)<=1.0f);
+        }
+        float pi_aprox = ((float)hits)/((float)(i));
+        pi_aprox *= 4.0f; 
+        fprintf(f,"%i,%.12f,%f\n",i,pi_aprox,M_PI-pi_aprox);
+    }
+    fclose(f);
+}
+
+int main(int argc, char* argv[]) {
+    srand((unsigned)clock());
+    time_tests(ITERATIONS);
+    difference_tests(32.0f);
+    calculate_pi(ITERATIONS);    
     return 0;
 }
