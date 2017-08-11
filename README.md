@@ -6,3 +6,6 @@ Based on Chris Lomont's [paper](https://www.lomont.org/Math/Papers/2003/InvSqrt.
 * Detailed tests against math.h sqrt
 * Tests against SSE2 sqrt instructions
 * Improve intial approximation
+* Use uint32_t instead of unsigned
+* Derive for double
+* Compare with f * invsqrt(f)
